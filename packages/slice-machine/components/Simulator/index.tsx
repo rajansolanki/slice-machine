@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  // useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  memo,
+} from "react";
 import { SharedSliceEditor } from "@prismicio/editor-fields";
 
 import { defaultSharedSliceContent } from "@src/utils/editor";
@@ -31,8 +38,29 @@ import { ThemeProvider } from "@prismicio/editor-ui";
 
 import { SharedSliceContent } from "@prismicio/types-internal/lib/content/fields/slices/SharedSliceContent";
 
-import useThrottle from "@src/hooks/useThrottle";
+// import useThrottle from "@src/hooks/useThrottle";
 import useSliceMachineActions from "@src/modules/useSliceMachineActions";
+import { SharedSlice } from "@prismicio/types-internal/lib/customtypes/widgets/slices";
+
+const IframeWrapper: React.FC<{
+  sharedSlice: SharedSlice;
+  screenDimensions: ScreenDimensions;
+  editorContent: SharedSliceContent;
+  simulatorUrl?: string;
+}> = ({ sharedSlice, editorContent, screenDimensions, simulatorUrl }) => {
+  const content = renderSliceMock(sharedSlice, editorContent);
+
+  return (
+    <IframeRenderer
+      apiContent={content}
+      screenDimensions={screenDimensions}
+      simulatorUrl={simulatorUrl}
+    />
+  );
+};
+
+// With out this too may re-renders are done and things break.
+const IframeMemo = memo(IframeWrapper);
 
 export default function Simulator() {
   const { component } = useSelector((store: SliceMachineStoreType) => ({
@@ -91,28 +119,28 @@ export default function Simulator() {
     setContent(initialContent);
   }
 
-  const initialApiContent = useMemo(
-    () =>
-      renderSliceMock(sharedSlice, editorContent) as {
-        id: string;
-        [k: string]: unknown;
-      },
-    []
-  );
+  // const initialApiContent = useMemo(
+  //   () =>
+  //     renderSliceMock(sharedSlice, editorContent) as {
+  //       id: string;
+  //       [k: string]: unknown;
+  //     },
+  //   []
+  // );
 
-  const renderSliceMockCb = useCallback(
-    () => () => ({
-      // cast as object because type is unknown
-      ...(renderSliceMock(sharedSlice, editorContent) as object),
-      id: initialApiContent.id,
-    }),
-    [sharedSlice, editorContent, initialApiContent]
-  );
+  // const renderSliceMockCb = useCallback(
+  //   () => () => ({
+  //     // cast as object because type is unknown
+  //     ...(renderSliceMock(sharedSlice, editorContent) as object),
+  //     id: initialApiContent.id,
+  //   }),
+  //   [sharedSlice, editorContent, initialApiContent]
+  // );
 
-  const apiContent = useThrottle(renderSliceMockCb, 800, [
-    sharedSlice,
-    editorContent,
-  ]);
+  // const apiContent = useThrottle(renderSliceMockCb, 800, [
+  //   sharedSlice,
+  //   editorContent,
+  // ]);
 
   const [isDisplayEditor, toggleIsDisplayEditor] = useState(true);
 
@@ -162,8 +190,9 @@ export default function Simulator() {
               handleScreenSizeChange={setScreenDimensions}
               screenDimensions={screenDimensions}
             />
-            <IframeRenderer
-              apiContent={apiContent}
+            <IframeMemo
+              sharedSlice={sharedSlice}
+              editorContent={editorContent}
               screenDimensions={screenDimensions}
               simulatorUrl={simulatorUrl}
             />
