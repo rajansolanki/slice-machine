@@ -1,10 +1,11 @@
+import type { Query } from "@prismicio/types"
 import { rest } from "msw"
 
 import { GeneratedCustomTypesPaths } from "../../../packages/core/build/node-utils/paths"
 import sm from "../sm.json"
 
 export const handlers = [
-  rest.get(`${sm.apiEndpoint}/documents/search`, (req, _res, _ctx) => {
+  rest.get<Query>(`${sm.apiEndpoint}/documents/search`, (req, _res, _ctx) => {
     const url = new URL(req.url)
     const searchParams = [...url.searchParams]
 
