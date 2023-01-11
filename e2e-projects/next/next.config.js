@@ -26,5 +26,9 @@ module.exports = async () => {
       path: "",
     },
     swcMinify: true,
+    webpack: (config) => {
+      config.resolve.fallback = { fs: false };
+      return config;
+    },
   };
 };

@@ -1,7 +1,11 @@
+import { generateDocumentMock } from "@prismicio/mocks"
 import type { Query } from "@prismicio/types"
+import { CustomType } from "@prismicio/types-internal/lib/customtypes"
+import { getOrElseW } from "fp-ts/Either"
 import { rest } from "msw"
 
-// import { GeneratedCustomTypesPaths } from "../../../packages/core/build/node-utils/paths"
+import { Files } from "../../../packages/core/build/node-utils"
+import { CustomTypesPaths /*, GeneratedCustomTypesPaths*/ } from "../../../packages/core/build/node-utils/paths"
 import sm from "../sm.json"
 
 export const handlers = [
@@ -23,8 +27,21 @@ export const handlers = [
 
     console.log({ queries, documentType, uid })
 
-    //const mockPath = GeneratedCustomTypesPaths(process.cwd()).customType(value).mock()
+    if (documentType === undefined) {
+      return req.passthrough()
+    } else {
+      const modelPath = CustomTypesPaths(process.cwd()).customType(documentType).model()
+      const model = Files.safeReadEntity<CustomType>(
+        modelPath,
+        (payload) => getOrElseW(() => null)(CustomType.decode(payload))
+      );
+      console.log("model", model)
+      if (model === null) return req.passthrough()
+      const mock = generateDocumentMock(model, {}, {})
+      console.log("mock", mock)
+      return req.passthrough()
+    }
 
-    return req.passthrough()
+    //const mockPath = GeneratedCustomTypesPaths(process.cwd()).customType(value).mock()
   }),
 ]
