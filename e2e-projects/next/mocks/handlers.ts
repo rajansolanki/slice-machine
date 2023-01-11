@@ -1,7 +1,7 @@
 import type { Query } from "@prismicio/types"
 import { rest } from "msw"
 
-import { GeneratedCustomTypesPaths } from "../../../packages/core/build/node-utils/paths"
+// import { GeneratedCustomTypesPaths } from "../../../packages/core/build/node-utils/paths"
 import sm from "../sm.json"
 
 export const handlers = [
@@ -11,18 +11,19 @@ export const handlers = [
 
     console.log(`${url.origin}${url.pathname}`, searchParams)
 
-    const [, predicate] = searchParams.find(([key]) => key === "q") ?? []
+    const queries = searchParams.filter(([key]) => key === "q").map(([, value]) => {
+      const matches = value.match(/(([\w.]+),\s+"([\w-]+)")/)
+      if (matches === null) return undefined
+      const [,, path, value2] = matches
+      return [path, value2]
+    }).filter((query): query is [string, string] => query !== undefined)
 
-    if (predicate === undefined) return req.passthrough()
+    const documentType = queries.find(([path]) => path === "document.type")?.[1]
+    const uid = queries.find(([path]) => path.endsWith(".uid"))?.[1]
 
-    const matches = predicate.matchAll(/(([\w.]+),\s+"(\w+)")/g)
-    for (const match of matches) {
-      const [,, path, value] = match
-      if (path === "document.type") {
-        const mockPath = GeneratedCustomTypesPaths(process.cwd()).customType(value).mock()
-        console.log("mockPath", mockPath)
-      }
-    }
+    console.log({ queries, documentType, uid })
+
+    //const mockPath = GeneratedCustomTypesPaths(process.cwd()).customType(value).mock()
 
     return req.passthrough()
   }),
