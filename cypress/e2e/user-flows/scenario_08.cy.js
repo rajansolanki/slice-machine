@@ -14,6 +14,16 @@ describe("Scenario 008", () => {
   let simulator = new SimulatorPage();
   let editor = new EditorPage();
 
+  before(() => {
+    // start recording
+    cy.recordHar();
+  });
+
+  after(() => {
+    // save the HAR file
+    cy.saveHar();
+  });
+
   beforeEach(() => {
     cy.clearProject();
     cy.setSliceMachineUserContext({});

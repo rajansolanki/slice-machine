@@ -20,3 +20,5 @@ import "./commands";
 // require('./commands')
 
 import "./assertions";
+
+require("@neuralegion/cypress-har-generator/commands");

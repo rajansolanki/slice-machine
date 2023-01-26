@@ -38,6 +38,7 @@
     "prettier": "^2.4.1"
   },
   "dependencies": {
+    "@neuralegion/cypress-har-generator": "^5.14.0",
     "cypress": "^12.1.0",
     "cypress-localstorage-commands": "^1.7.0",
     "cypress-wait-until": "^1.7.2",

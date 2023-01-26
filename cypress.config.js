@@ -1,4 +1,5 @@
 const { defineConfig } = require("cypress");
+const { install } = require("@neuralegion/cypress-har-generator");
 
 module.exports = defineConfig({
   viewportWidth: 1920,
@@ -10,6 +11,7 @@ module.exports = defineConfig({
     // We've imported your old cypress plugins here.
     // You may want to clean this up later by importing these.
     setupNodeEvents(on, config) {
+      install(on);
       return require("./cypress/plugins/index.js")(on, config);
     },
     baseUrl: "http://localhost:9999",

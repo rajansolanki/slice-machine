@@ -103,12 +103,18 @@ jobs:
           customtypesapi_endpoint: ${{ secrets.CUSTOMTYPESAPI_ENDPOINT }}
           user_service_endpoint: ${{ secrets.USER_SERVICE_ENDPOINT }}
           acl_provider_endpoint: ${{ secrets.ACL_PROVIDER_ENDPOINT }}
+          ELECTRON_EXTRA_LAUNCH_ARGS: --remote-debugging-port=9222 
         run: npm i && npm run test:e2e
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
           name: e2e-tests-screenshots
           path: cypress/screenshots/
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: e2e-test-8-har
+          path: scenario_08.cy.har
 
   deployment:
     runs-on: ubuntu-latest
