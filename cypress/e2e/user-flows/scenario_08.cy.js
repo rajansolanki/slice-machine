@@ -27,6 +27,8 @@ describe("Scenario 008", () => {
   beforeEach(() => {
     cy.clearProject();
     cy.setSliceMachineUserContext({});
+
+    cy.listDir();
   });
 
   it("creates slice and tests the editor mocks", () => {
@@ -48,19 +50,19 @@ describe("Scenario 008", () => {
         variation.variation === "default"
           ? variation
           : {
-              ...variation,
-              primary: {
-                ...variation.primary,
-                booleanfield: {
-                  ...variation.primary.booleanfield,
-                  value: false,
-                },
-                selectfield: {
-                  ...variation.primary.selectfield,
-                  value: "1",
-                },
+            ...variation,
+            primary: {
+              ...variation.primary,
+              booleanfield: {
+                ...variation.primary.booleanfield,
+                value: false,
               },
-            }
+              selectfield: {
+                ...variation.primary.selectfield,
+                value: "1",
+              },
+            },
+          }
       )
     );
 

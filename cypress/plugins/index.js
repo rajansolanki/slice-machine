@@ -35,6 +35,13 @@ module.exports = (on, config) => {
         return null;
       }
     },
+    ls(dir) {
+      const dirList = fs.readdirSync(dir);
+      console.log("\n\n\n")
+      console.log(dirList);
+      console.log("\n\n\n")
+      return dirList;
+    },
     sha256(fileBuffer) {
       const hashSum = crypto.createHash("sha256");
       hashSum.update(fileBuffer);

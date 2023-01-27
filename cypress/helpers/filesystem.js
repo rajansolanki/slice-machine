@@ -14,6 +14,10 @@ export function clearProject() {
   clearAssets();
 }
 
+export function listDir() {
+  cy.task("ls", SLICES_FOLDER);
+}
+
 /**
  * Clean the custom type folder of the project.
  */
