@@ -96,6 +96,8 @@ const Simulator: ComponentWithSliceProps = ({ slice, variation }) => {
     return UiState.LOADING_SETUP;
   })();
 
+  console.log({ manifestStatus, iframeStatus });
+
   useEffect(() => {
     if (currentState === UiState.FAILED_SETUP && !setupIntervalId.current) {
       const id = setInterval(() => {
