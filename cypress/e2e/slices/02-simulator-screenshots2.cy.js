@@ -34,7 +34,11 @@ describe("I am an existing SM user and I want to take a screenshot from the slic
   it("Open the simulator on the default variant", () => {
     simulatorPage.setup();
 
+    cy.wait(5000)
+
     slicePage.openSimulator();
+
+    cy.wait(5000)
 
     simulatorPage
       .resizeScreenWithDropdown("Desktop", "Tablet")
