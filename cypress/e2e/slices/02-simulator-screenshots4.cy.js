@@ -38,7 +38,7 @@ describe("I am an existing SM user and I want to take a screenshot from the slic
 
     slicePage.openSimulator();
 
-    cy.wait(5000)
+    //cy.wait(5000)
 
     simulatorPage
       .resizeScreenWithDropdown("Desktop", "Tablet")
