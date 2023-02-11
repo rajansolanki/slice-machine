@@ -37,11 +37,7 @@ const Changes: React.FunctionComponent = () => {
     isSyncing: isLoading(store, LoadingKeysEnum.CHANGES_PUSH),
   }));
 
-  useEffect(() => {
-    return () => {
-      closeModals();
-    };
-  }, []);
+  useEffect(() => closeModals(), [closeModals]);
 
   const numberOfChanges = unSyncedSlices.length + unSyncedCustomTypes.length;
 

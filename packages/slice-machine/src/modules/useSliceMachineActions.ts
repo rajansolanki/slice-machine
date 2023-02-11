@@ -84,6 +84,17 @@ import { ScreenDimensions } from "@lib/models/common/Screenshots";
 import { ScreenshotTaken } from "@src/tracking/types";
 import { saveSliceMockCreator } from "./simulator";
 import { SaveSliceMockRequest } from "@src/apiClient";
+import { useCallback } from "react";
+import { EmptyActionCreator, PayloadActionCreator } from "typesafe-actions";
+
+export const useWithDispatch = <Type extends string>(
+  fn: EmptyActionCreator<Type>
+) => {
+  const dispatch = useDispatch();
+  return useCallback(() => {
+    dispatch(fn());
+  }, [dispatch, fn]);
+};
 
 const useSliceMachineActions = () => {
   const dispatch = useDispatch();
@@ -99,9 +110,7 @@ const useSliceMachineActions = () => {
     dispatch(connectToSimulatorIframeCreator.success());
 
   // Modal module
-  const closeModals = () => {
-    dispatch(modalCloseCreator());
-  };
+  const closeModals = useWithDispatch(modalCloseCreator);
   const openLoginModal = () =>
     dispatch(modalOpenCreator({ modalKey: ModalKeysEnum.LOGIN }));
   const openScreenshotsModal = () =>
