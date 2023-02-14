@@ -92,8 +92,21 @@ jobs:
         run: npm run build
       - name: Build and export slice machine UI
         working-directory: ./packages/slice-machine
-        run: npm run build && npm run export-build
+        run: npm run build
+      - name: Running End to End tests with BETA env
+        if: startsWith(github.ref, 'refs/heads/releases')
+        env:
+          EMAIL: ${{ secrets.EMAIL }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+          PRISMIC_URL: ${{ secrets.PRISMIC_URL }}
+          wroom_endpoint: ${{ secrets.PRISMIC_URL }}
+          authentication_server_endpoint: ${{ secrets.AUTHENTICATION_SERVER_ENDPOINT_BETA }}
+          customtypesapi_endpoint: ${{ secrets.CUSTOMTYPESAPI_ENDPOINT_BETA }}
+          user_service_endpoint: ${{ secrets.USER_SERVICE_ENDPOINT_BETA }}
+          acl_provider_endpoint: ${{ secrets.ACL_PROVIDER_ENDPOINT_BETA }}
+        run: npm i && npm run test:e2e
       - name: Running End to End tests
+        if: ${{ !startsWith(github.ref, 'refs/heads/releases') }}
         env:
           EMAIL: ${{ secrets.EMAIL }}
           PASSWORD: ${{ secrets.PASSWORD }}
@@ -104,6 +117,7 @@ jobs:
           user_service_endpoint: ${{ secrets.USER_SERVICE_ENDPOINT }}
           acl_provider_endpoint: ${{ secrets.ACL_PROVIDER_ENDPOINT }}
         run: npm i && npm run test:e2e
+
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
