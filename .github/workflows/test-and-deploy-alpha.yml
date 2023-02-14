@@ -98,7 +98,7 @@ jobs:
         env:
           EMAIL: ${{ secrets.EMAIL }}
           PASSWORD: ${{ secrets.PASSWORD }}
-          PRISMIC_URL: ${{ secrets.PRISMIC_URL }}
+          PRISMIC_URL: ${{ secrets.PRISMIC_URL_BETA }}
           wroom_endpoint: ${{ secrets.PRISMIC_URL_BETA }}
           authentication_server_endpoint: ${{ secrets.AUTHENTICATION_SERVER_ENDPOINT_BETA }}
           customtypesapi_endpoint: ${{ secrets.CUSTOMTYPESAPI_ENDPOINT_BETA }}
