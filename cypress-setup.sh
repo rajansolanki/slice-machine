@@ -30,7 +30,10 @@ rm -rf e2e-projects/cypress-next-app \
 && cd e2e-projects/cypress-next-app \
 && npm i *.tgz \
 && npx @slicemachine/init --repository ${_PRISMIC_REPO} \
+&& echo "package content before:" && cat package.json \
 && npm i --save-dev slice-machine-ui*.tgz slicemachine-adapter-next*.tgz \
-&& npm i \
+&& echo "package content after:" && cat package.json \
+&& npm i slice-machine-ui @slicemachine/adapter-next \
+&& ls -l node_modules/@slicemachine/ \
 && npx --yes json -I -f package.json -e "this.scripts.slicemachine=\"start-slicemachine\"" \
 && npx --yes json -I -f slicemachine.config.json -e "this.localSliceSimulatorURL=\"http://localhost:3000/slice-simulator\""
