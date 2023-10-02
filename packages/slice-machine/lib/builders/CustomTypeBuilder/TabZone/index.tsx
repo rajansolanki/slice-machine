@@ -5,11 +5,13 @@ import { useSelector } from "react-redux";
 import type { AnyObjectSchema } from "yup";
 import { useRouter } from "next/router";
 
+import { managerClient } from "@src/managerClient";
 import ctBuilderArray from "@lib/models/common/widgets/ctBuilderArray";
-import type {
-  CustomTypeSM,
-  TabField,
-  TabFields,
+import {
+  CustomTypes,
+  type CustomTypeSM,
+  type TabField,
+  type TabFields,
 } from "@lib/models/common/CustomType";
 import type { SlicesSM } from "@lib/models/common/Slices";
 import { ensureDnDDestination, ensureWidgetTypeExistence } from "@lib/utils";
@@ -17,10 +19,10 @@ import useSliceMachineActions from "@src/modules/useSliceMachineActions";
 import type { SliceMachineStoreType } from "@src/redux/type";
 import { telemetry } from "@src/apiClient";
 import { transformKeyAccessor } from "@utils/str";
+import * as Widgets from "@models/common/widgets/withGroup";
 
-import * as Widgets from "../../../../lib/models/common/widgets/withGroup";
 import { selectCurrentPoolOfFields } from "../../../../src/modules/selectedCustomType";
-import type { Widget } from "../../../models/common/widgets/Widget";
+import type { AnyWidget, Widget } from "../../../models/common/widgets/Widget";
 import EditModal from "../../common/EditModal";
 import Zone from "../../common/Zone";
 import SliceZone from "../SliceZone";
@@ -40,12 +42,13 @@ const TabZone: FC<TabZoneProps> = ({
 }) => {
   const {
     deleteCustomTypeField,
-    addCustomTypeField,
     reorderCustomTypeField,
     replaceCustomTypeField,
     createSliceZone,
     deleteSliceZone,
     deleteCustomTypeSharedSlice,
+    saveCustomTypeSuccess,
+    initCustomTypeStore,
   } = useSliceMachineActions();
 
   const { query } = useRouter();
@@ -63,7 +66,7 @@ const TabZone: FC<TabZoneProps> = ({
     deleteCustomTypeField(tabId, fieldId);
   };
 
-  const onSaveNewField = ({
+  const onSaveNewField = async ({
     id,
     label,
     widgetTypeName,
@@ -76,17 +79,60 @@ const TabZone: FC<TabZoneProps> = ({
     if (ensureWidgetTypeExistence(Widgets, widgetTypeName)) {
       return;
     }
+
     // @ts-expect-error We have to create a widget map or a service instead of using export name
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const widget: Widget<TabField, AnyObjectSchema> = Widgets[widgetTypeName];
-    void telemetry.track({
-      event: "custom-type:field-added",
-      id,
-      name: customType.id,
-      type: widget.TYPE_NAME,
-      zone: "static",
-    });
-    addCustomTypeField(tabId, id, widget.create(label));
+
+    const field: TabField = widget.create(label);
+
+    try {
+      if (
+        field.type === "Range" ||
+        field.type === "IntegrationFields" ||
+        field.type === "Separator"
+      ) {
+        throw new Error("Unsupported Field Type.");
+      }
+      const CurrentWidget: AnyWidget = Widgets[field.type];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+      CurrentWidget.schema.validateSync(field, { stripUnknown: false });
+
+      const newCustomType: CustomTypeSM = {
+        ...customType,
+        tabs: customType.tabs.map((tab) =>
+          tab.key === tabId && tab.sliceZone
+            ? {
+                ...tab,
+                value: [...tab.value, { key: id, value: field }],
+              }
+            : tab
+        ),
+      };
+
+      await managerClient.customTypes.updateCustomType({
+        model: CustomTypes.fromSM(newCustomType),
+      });
+
+      void telemetry.track({
+        event: "custom-type:field-added",
+        id,
+        name: customType.id,
+        type: widget.TYPE_NAME,
+        zone: "static",
+      });
+
+      // Reset selected custom type store to update slice zone and saving status
+      initCustomTypeStore(newCustomType, newCustomType);
+
+      // Update available custom type store with new custom type
+      saveCustomTypeSuccess(CustomTypes.fromSM(newCustomType));
+    } catch (err) {
+      console.error(
+        // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+        `Add field: Model is invalid for field "${field.type}".\nFull error: ${err}`
+      );
+    }
   };
 
   const onDragEnd = (result: DropResult) => {

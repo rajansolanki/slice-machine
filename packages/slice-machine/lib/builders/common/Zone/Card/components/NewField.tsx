@@ -1,26 +1,27 @@
 import { Ref, SetStateAction, useEffect, useRef, useState } from "react";
 import { Formik, Form, Field } from "formik";
-import { Box, Input, Flex, Text, Button, useThemeUI } from "theme-ui";
+import { Box, Input, Flex, Text, useThemeUI } from "theme-ui";
 import * as CSS from "csstype";
 import { AnyObjectSchema } from "yup";
+import { Button } from "@prismicio/editor-ui";
 
 import { validateId } from "@lib/forms/defaults";
 import { createInitialValues, createValidationSchema } from "@lib/forms";
 import * as Widgets from "@lib/models/common/widgets/withGroup";
 import { slugify } from "@lib/utils/str";
 import { AnyWidget } from "@lib/models/common/widgets/Widget";
-
-import { ErrorTooltip } from "./ErrorTooltip";
 import { InputType } from "@lib/forms/fields";
 import {
   getInputFieldStyles,
   InputFieldStyles,
 } from "@components/FormFields/Input";
 
+import { ErrorTooltip } from "./ErrorTooltip";
+
 interface NewField {
   widgetTypeName: string;
   fields: Array<{ key: string }>;
-  onSave: (values: FormFieldValues) => void;
+  onSave: (values: FormFieldValues) => Promise<void> | void;
   onCancelNewField: () => void;
 }
 
@@ -46,6 +47,7 @@ const NewField: React.FC<NewField> = ({
   const fieldRef = useRef<HTMLInputElement>(null);
   const { theme } = useThemeUI();
   const [isIdFieldPristine, setIsIdFieldPristine] = useState(true);
+
   useEffect(() => {
     if (fieldRef.current) {
       fieldRef.current.focus();
@@ -118,7 +120,14 @@ const NewField: React.FC<NewField> = ({
       validationSchema={validationSchema}
       initialValues={initialValues}
     >
-      {({ errors, values, setValues, setFieldValue }) => (
+      {({
+        errors,
+        values,
+        setValues,
+        setFieldValue,
+        submitForm,
+        isSubmitting,
+      }) => (
         <Form data-cy="new-field-form">
           <Flex
             as="li"
@@ -222,25 +231,23 @@ const NewField: React.FC<NewField> = ({
                 <ErrorTooltip error={errors.id} />
               </Flex>
             </Flex>
-            <Box sx={{ minWidth: 150, ml: 3 }}>
-              <Button
-                onClick={onCancelNewField}
-                variant="secondary"
-                type="button"
-              >
+            <Box
+              sx={{
+                minWidth: 150,
+                ml: 3,
+                display: "flex",
+                gap: "8px",
+                justifyContent: "end",
+              }}
+            >
+              <Button onClick={onCancelNewField} variant="secondary">
                 Cancel
               </Button>
               <Button
-                sx={{
-                  fontWeight: "400",
-                  paddingBlock: "8px",
-                  paddingInline: "16px",
-                  fontSize: "14px",
-                  borderRadius: "4px",
-                  lineHeight: "21px",
-                  ml: 2,
+                onClick={() => {
+                  void submitForm();
                 }}
-                type="submit"
+                loading={isSubmitting}
               >
                 Add
               </Button>

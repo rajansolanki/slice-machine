@@ -7,7 +7,6 @@ import {
   SelectedCustomTypeActions,
   initCustomTypeStoreCreator,
   cleanupCustomTypeStoreCreator,
-  addFieldCreator,
   deleteTabCreator,
   renameSelectedCustomTypeLabel,
   createSliceZoneCreator,
@@ -104,31 +103,6 @@ export const selectedCustomTypeReducer: Reducer<
       if (!state) return state;
       const { tabId } = action.payload;
       return StateHelpers.deleteTab(state, tabId);
-    }
-    case getType(addFieldCreator): {
-      const { tabId, field, fieldId } = action.payload;
-      try {
-        if (
-          field.type === "Range" ||
-          field.type === "IntegrationFields" ||
-          field.type === "Separator"
-        ) {
-          throw new Error("Unsupported Field Type.");
-        }
-        const CurrentWidget: AnyWidget = Widgets[field.type];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-        CurrentWidget.schema.validateSync(field, { stripUnknown: false });
-        return StateHelpers.updateTab(
-          state,
-          tabId
-        )((tab) => Tab.addWidget(tab, fieldId, field));
-      } catch (err) {
-        console.error(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-          `[store/addWidget] Model is invalid for widget "${field.type}".\nFull error: ${err}`
-        );
-        return state;
-      }
     }
     case getType(deleteFieldCreator): {
       const { tabId, fieldId } = action.payload;

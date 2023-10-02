@@ -30,7 +30,6 @@ import {
   createTabCreator,
   deleteTabCreator,
   updateTabCreator,
-  addFieldCreator,
   deleteFieldCreator,
   reorderFieldCreator,
   replaceFieldCreator,
@@ -198,11 +197,6 @@ const useSliceMachineActions = () => {
     dispatch(deleteTabCreator({ tabId }));
   const updateCustomTypeTab = (tabId: string, newTabId: string) =>
     dispatch(updateTabCreator({ tabId, newTabId }));
-  const addCustomTypeField = (
-    tabId: string,
-    fieldId: string,
-    field: TabField
-  ) => dispatch(addFieldCreator({ tabId, fieldId, field }));
   const deleteCustomTypeField = (tabId: string, fieldId: string) =>
     dispatch(deleteFieldCreator({ tabId, fieldId }));
   const reorderCustomTypeField = (tabId: string, start: number, end: number) =>
@@ -487,7 +481,6 @@ const useSliceMachineActions = () => {
     createCustomTypeTab,
     updateCustomTypeTab,
     deleteCustomTypeTab,
-    addCustomTypeField,
     deleteCustomTypeField,
     reorderCustomTypeField,
     replaceCustomTypeField,

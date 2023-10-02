@@ -9,7 +9,6 @@ export type SelectedCustomTypeActions =
   | ActionType<typeof createTabCreator>
   | ActionType<typeof updateTabCreator>
   | ActionType<typeof deleteTabCreator>
-  | ActionType<typeof addFieldCreator>
   | ActionType<typeof deleteFieldCreator>
   | ActionType<typeof replaceFieldCreator>
   | ActionType<typeof reorderFieldCreator>
@@ -50,13 +49,6 @@ export const updateTabCreator = createAction("CUSTOM_TYPE/UPDATE_TAB")<{
 
 export const deleteTabCreator = createAction("CUSTOM_TYPE/DELETE_TAB")<{
   tabId: string;
-}>();
-
-// Field actions
-export const addFieldCreator = createAction("CUSTOM_TYPE/ADD_FIELD")<{
-  tabId: string;
-  fieldId: string;
-  field: TabField;
 }>();
 
 export const deleteFieldCreator = createAction("CUSTOM_TYPE/DELETE_FIELD")<{

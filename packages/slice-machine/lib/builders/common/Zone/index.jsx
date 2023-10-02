@@ -180,9 +180,9 @@ const Zone = ({
                     {...newFieldData}
                     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/strict-boolean-expressions
                     fields={poolOfFieldsToCheck || fields}
-                    onSave={(...args) => {
+                    onSave={async (...args) => {
                       // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-                      onSaveNewField(...args);
+                      await onSaveNewField(...args);
                       setNewFieldData(null);
                     }}
                     onCancelNewField={onCancelNewField}

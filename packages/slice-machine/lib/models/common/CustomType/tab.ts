@@ -125,14 +125,6 @@ export const Tab = {
       };
     };
   },
-  addWidget(tab: TabSM, id: string, widget: TabField): TabSM {
-    const elem = { key: id, value: widget };
-
-    return {
-      ...tab,
-      value: [...tab.value, elem],
-    };
-  },
   replaceWidget(
     tab: TabSM,
     previousKey: string,

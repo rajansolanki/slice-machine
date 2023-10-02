@@ -3,7 +3,6 @@ import { CustomTypes } from "@lib/models/common/CustomType";
 import jsonModel from "./__fixtures__/model.json";
 import { CustomType } from "@prismicio/types-internal/lib/customtypes";
 import {
-  addFieldCreator,
   createSliceZoneCreator,
   createTabCreator,
   selectedCustomTypeReducer,
@@ -128,24 +127,6 @@ describe("[Selected Custom type module]", () => {
       expect(!!newState.model.tabs.find((e) => e.key === unknownTabId)).toBe(
         false
       );
-    });
-    it("should add a field into a custom type given CUSTOM_TYPE/ADD_FIELD action", () => {
-      const fieldId = "fieldId";
-      // @ts-expect-error TS(2531) FIXME: Object is possibly 'null'.
-      const initialTab = dummyCustomTypesState.model.tabs[0];
-      const newState = selectedCustomTypeReducer(
-        dummyCustomTypesState,
-        addFieldCreator({
-          tabId: initialTab.key,
-          fieldId,
-          field: widgets.Boolean.create(fieldId),
-        })
-      );
-
-      // @ts-expect-error TS(2531) FIXME: Object is possibly 'null'.
-      const tabValue = newState.model.tabs[0].value;
-      expect(tabValue.length).toEqual(initialTab.value.length + 1);
-      expect(tabValue[tabValue.length - 1].key).toEqual(fieldId);
     });
     it("should remove a field into a custom type given CUSTOM_TYPE/DELETE_FIELD action", () => {
       // @ts-expect-error TS(2531) FIXME: Object is possibly 'null'.
