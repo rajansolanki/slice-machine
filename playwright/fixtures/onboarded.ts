@@ -5,8 +5,9 @@ const onboardedModel = {
   userContext: JSON.stringify({
     hasSendAReview: true,
     updatesViewed: { latest: null, latestNonBreaking: null },
+    hasSeenChangesToolTip: true,
     hasSeenSimulatorToolTip: true,
-    hasSeenTutorialsTooTip: true,
+    hasSeenTutorialsToolTip: true,
     authStatus: "unknown",
     lastSyncChange: null,
   }),

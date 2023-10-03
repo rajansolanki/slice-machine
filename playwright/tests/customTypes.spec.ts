@@ -26,7 +26,7 @@ test("I can create a new Custom Type", async ({
   await customTypesListPage.openActionModal(name, "Rename");
 
   const newName = name + " - Edited";
-  await renameTypeModalPage.renameType(name + " - Edited");
+  await renameTypeModalPage.renameType(newName);
 
   await customTypesListPage.getRow(newName).click();
   await expect(customTypesDetailsPage.breadcrumb).toContainText(newName);

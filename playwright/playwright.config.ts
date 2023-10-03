@@ -48,14 +48,20 @@ const config: PlaywrightTestConfig = {
     testIdAttribute: "data-cy",
   },
 
-  webServer: process.env.APP_CWD
-    ? {
-        cwd: process.env.APP_CWD,
-        command: `npm run slicemachine -- --port ${process.env.APP_SM_PORT}`,
-        url: `http://localhost:${process.env.APP_SM_PORT}`,
-        reuseExistingServer: !process.env.CI,
-      }
-    : undefined,
+  webServer: [
+    {
+      cwd: "..",
+      command: "yarn dev",
+      url: `http://localhost:3000/`,
+      reuseExistingServer: !process.env.CI,
+    },
+    {
+      cwd: "../e2e-projects/next",
+      command: "yarn slicemachine:dev",
+      url: `http://localhost:9999`,
+      reuseExistingServer: !process.env.CI,
+    },
+  ],
   /* Configure projects for major browsers */
   projects: [
     // {

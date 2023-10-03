@@ -62,7 +62,7 @@ export class TypeDetailsPage {
     await expect(this.addFieldsModalTitle).toBeVisible();
     await this.page.getByRole("heading", { name: type }).click();
     await expect(this.addFieldsModalTitle).not.toBeVisible();
-    await this.page.getByPlaceholder("Field Name").type(name);
+    await this.page.getByPlaceholder("Field Name").fill(name);
     await expect(this.page.getByPlaceholder("e.g. buttonLink")).toHaveValue(
       expectedId
     );

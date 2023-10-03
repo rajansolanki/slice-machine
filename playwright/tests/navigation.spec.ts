@@ -22,7 +22,7 @@ test("Navigate through all menu entries", async ({
 
   await menu.slicesLink.click();
   await expect(sliceListPage.title).toBeVisible();
-  await page.waitForLoadState();
+  // await page.waitForLoadState();
   expect(await page.title()).toContain("Slices - Slice Machine");
 
   await menu.changesLink.click();

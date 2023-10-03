@@ -17,8 +17,8 @@ export class SliceDetailsPage {
   constructor(page: Page) {
     this.page = page;
 
-    this.title = page.getByTestId("slice-and-variation-name-header");
-    this.saveButton = page.getByRole("button", { name: "Save to File System" });
+    this.title = page.getByLabel("Breadcrumb");
+    this.saveButton = page.getByRole("button", { name: "Save" });
 
     this.showSnippetsButton = page.getByRole("button", {
       name: "Show code snippets",
@@ -67,7 +67,7 @@ export class SliceDetailsPage {
     await expect(this.addFieldsModalTitle).toBeVisible();
     await this.page.getByRole("heading", { name: type }).click();
     await expect(this.addFieldsModalTitle).not.toBeVisible();
-    await this.page.getByPlaceholder("Field Name").type(name);
+    await this.page.getByPlaceholder("Field Name").fill(name);
     await expect(this.page.getByPlaceholder("e.g. buttonLink")).toHaveValue(
       expectedId
     );

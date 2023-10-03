@@ -2,7 +2,7 @@ import { Locator, Page } from "@playwright/test";
 
 export class TypesListPage {
   readonly page: Page;
-  readonly root: Locator;
+  readonly body: Locator;
   readonly path: string;
   readonly title: Locator;
   readonly createButton: Locator;
@@ -11,14 +11,14 @@ export class TypesListPage {
   protected constructor(page: Page, title: string, path: string) {
     this.page = page;
     this.path = path;
-    this.root = page.getByRole("main");
-    this.title = this.root.getByLabel("Breadcrumb").getByText(title);
-    this.createButton = this.root
+    this.body = page.getByRole("main");
+    this.title = page.getByLabel("Breadcrumb").getByText(title);
+    this.createButton = page
       .getByTestId("create-ct")
       .or(
-        this.root.getByRole("article").getByRole("button", { name: "Create" })
+        this.body.getByRole("article").getByRole("button", { name: "Create" })
       );
-    this.actionIcon = this.root.getByTestId("ct-action-icon");
+    this.actionIcon = this.body.getByTestId("ct-action-icon");
   }
 
   async goto() {

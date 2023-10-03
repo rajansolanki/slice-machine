@@ -1,5 +1,4 @@
-import { expect } from "@playwright/test";
-import { test } from "../../fixtures/onboarded";
+import { test, expect } from "../../fixtures/onboarded";
 
 test("I can create a new Slice", async ({
   sliceDetailsPage,
@@ -10,6 +9,7 @@ test("I can create a new Slice", async ({
 }) => {
   await page.goto("/");
   await menu.slicesLink.click();
+  await expect(sliceListPage.title).toBeVisible();
   await sliceListPage.openCreateModal();
 
   const randomInt = Math.floor(Math.random() * 1e9);
@@ -38,7 +38,7 @@ test("I can create a new Slice", async ({
 
   await sliceDetailsPage.saveButton.click();
   await expect(sliceDetailsPage.saveButton).toBeDisabled();
-  await expect(sliceDetailsPage.page.getByText("Model saved")).toBeVisible();
+  await expect(sliceDetailsPage.page.getByText("Slice saved successfully")).toBeVisible();
 
   await menu.slicesLink.click();
   await expect(sliceListPage.getCard(sliceName)).toBeVisible();

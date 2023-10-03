@@ -1,20 +1,12 @@
 import { expect, Locator, Page } from "@playwright/test";
+import { Modal } from "../Modal.page";
 
-export class CreateSliceModalPage {
-  readonly page: Page;
-  readonly title: Locator;
+export class CreateSliceModalPage extends Modal {
   readonly nameInput: Locator;
-  readonly closeButton: Locator;
-  readonly cancelButton: Locator;
-  readonly submitButton: Locator;
 
   constructor(page: Page) {
-    this.page = page;
-    this.title = page.getByRole("heading", { name: "Create a new slice" });
+    super(page, "Create a new slice", "Create");
     this.nameInput = page.getByTestId("slice-name-input");
-    this.closeButton = page.getByRole("button", { name: "Close" });
-    this.cancelButton = page.getByRole("button", { name: "Cancel" });
-    this.submitButton = page.getByRole("button", { name: "Create" });
   }
 
   async createSlice(name: string) {

@@ -2,7 +2,6 @@ import { expect } from "@playwright/test";
 import { test } from "../fixtures/onboarded";
 
 test("As an onboarded user, I can only use Pascal case slice names", async ({
-  browserName,
   sliceListPage,
   createSliceModalPage,
 }) => {
@@ -11,23 +10,23 @@ test("As an onboarded user, I can only use Pascal case slice names", async ({
 
   const { nameInput, submitButton } = createSliceModalPage;
 
-  await nameInput.type("Invalid Slice Name");
+  await nameInput.fill("Invalid Slice Name");
   await expect(submitButton).toBeDisabled();
 
   await nameInput.clear();
-  await nameInput.type("Invalid_slice_name");
+  await nameInput.fill("Invalid_slice_name");
   await expect(submitButton).toBeDisabled();
 
   await nameInput.clear();
-  await nameInput.type("123SliceName");
+  await nameInput.fill("123SliceName");
   await expect(submitButton).toBeDisabled();
 
   await nameInput.clear();
-  await nameInput.type("ValidSliceName");
+  await nameInput.fill("ValidSliceName");
   await expect(submitButton).toBeEnabled();
 });
 
-test("As an onboarded user, I can create a new Slice", async ({
+test("Create Slice", async ({
   sliceDetailsPage,
   sliceListPage,
   createSliceModalPage,
@@ -48,4 +47,42 @@ test("As an onboarded user, I can create a new Slice", async ({
   await expect(
     sliceDetailsPage.repeatableZone.getByRole("listitem")
   ).toHaveCount(0);
+});
+
+
+test("Rename slice", async ({
+  slice,
+  sliceDetailsPage,
+  sliceListPage,
+  renameSliceModalPage
+}) => {
+  await sliceListPage.goto();
+  await sliceListPage.openActionModal(slice.name, "Rename");
+
+  const newSliceName = `${slice.name}Renamed`;
+  await renameSliceModalPage.renameSlice(newSliceName);
+
+  await expect(sliceListPage.getCard(slice.name)).not.toBeVisible();
+  await expect(sliceListPage.getCard(newSliceName)).toBeVisible();
+  await sliceListPage.clickCard(newSliceName);
+
+  await expect(sliceDetailsPage.title).toContainText(newSliceName);
+});
+
+
+test("Delete slice", async ({
+  slice,
+  sliceListPage,
+  deleteSliceModalPage,
+  page
+}) => {
+  await sliceListPage.goto();
+  await sliceListPage.openActionModal(slice.name, "Delete");
+
+  await expect(deleteSliceModalPage.root.getByText(`/${slice.name}/`)).toBeVisible();
+  await deleteSliceModalPage.deleteSlice();
+
+  await expect(sliceListPage.getCard(slice.name)).not.toBeVisible();
+  await page.reload();
+  await expect(sliceListPage.getCard(slice.name)).not.toBeVisible();
 });

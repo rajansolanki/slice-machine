@@ -1,17 +1,17 @@
 import { expect, Locator, Page } from "@playwright/test";
 import { Modal } from "../Modal.page";
 
-export class RenameTypeModalPage extends Modal{
+export class RenameSliceModalPage extends Modal {
   readonly nameInput: Locator;
 
   constructor(page: Page) {
-    super(page, /Rename a (page|custom) type/, "Rename")
-    this.nameInput = this.root.getByTestId("custom-type-name-input");
+    super(page, "Rename a slice", "Rename");
+    this.nameInput = page.getByTestId("slice-name-input");
   }
 
-  async renameType(newName: string) {
+  async renameSlice(name: string) {
     await expect(this.title).toBeVisible();
-    await this.nameInput.fill(newName);
+    await this.nameInput.fill(name);
     await this.submitButton.click();
     await expect(this.title).not.toBeVisible();
   }

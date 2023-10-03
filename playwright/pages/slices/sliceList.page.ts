@@ -3,34 +3,35 @@ import { Locator, Page } from "@playwright/test";
 export class SliceListPage {
   readonly page: Page;
   readonly title: Locator;
-  readonly root: Locator;
+  readonly header: Locator;
+  readonly body: Locator;
   readonly createButton: Locator;
-  readonly actionIcon: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.root = page.getByRole("main").first();
-    this.title = this.root.getByRole("link", { name: "Slices", exact: true });
-    this.createButton = this.root
+    this.body = page.getByRole("main").first();
+    this.header = page.getByRole("banner");
+    this.title = this.header.getByLabel("Breadcrumb").getByText("Slices");
+    this.createButton = this.header
       .getByRole("button", { name: "Create one" })
-      .or(this.root.getByRole("button", { name: "Create a Slice" }));
-    this.actionIcon = this.root.getByTestId("slice-action-icon");
+      .or(page.getByRole("button", { name: "Create" }));
   }
 
   async goto() {
     await this.page.goto("/slices");
+    await this.title.isVisible();
   }
 
   getCard(name: string): Locator {
-    return this.root.getByRole("button", {
+    return this.body.getByRole("button", {
       name: `${name} slice card`,
       exact: true,
     });
   }
 
-  async clickSliceCard(name: string) {
+  async clickCard(name: string) {
     // Make sure not to accidentaly click on a button that would trigger another action
-    await this.getCard(name).getByRole("button", { name }).click();
+    await this.getCard(name).getByRole("heading", { name }).click();
   }
 
   async openCreateModal() {
@@ -38,7 +39,8 @@ export class SliceListPage {
   }
 
   async openActionModal(name: string, action: "Rename" | "Delete") {
-    await this.getCard(name)
+    await this.getCard(name).getByTestId("slice-action-icon").click();
+    await this.page
       .getByTestId("slice-action-icon-dropdown")
       .getByText(action)
       .click();
