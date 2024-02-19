@@ -6,7 +6,7 @@
   "packageManager": "yarn@3.6.0",
   "scripts": {
     "clean": "rimraf --glob '{e2e-projects/*/{.next,.svelte-kit},packages/*/{.next,.svelte-kit,build,coverage,dist,out,package.tgz,src/**/*.module.css.d.ts,storybook-static},playwright/{playwright-report,test-results}}'",
-    "dev": "concurrently --prefix-colors auto \"yarn:dev:*\"",
+    "dev": "concurrently toto --prefix-colors auto \"yarn:dev:*\"",
     "dev:manager": "yarn workspace @slicemachine/manager dev",
     "dev:start-slicemachine": "yarn workspace start-slicemachine dev",
     "dev:plugin-kit": "yarn workspace @slicemachine/plugin-kit dev",
